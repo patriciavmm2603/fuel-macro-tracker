@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Fuel - Calorie &amp; Macro Tracker</title>
+<link rel="stylesheet" href="styles.css?v=1">
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="kicker" id="appKicker">STEWARD OF THE BODY</div>
+    <h1 id="appTitle">Fuel</h1>
+    <div class="sub" id="appSub">Calorie &amp; macro tracker</div>
+    <div class="langtoggle" role="group" aria-label="Language">
+      <button data-lang="en" class="active">EN</button>
+      <button data-lang="es">ES</button>
+    </div>
+  </header>
+
+  <div class="streakline" id="streakLine"></div>
+
+  <main>
+    <!-- TODAY -->
+    <section class="view" id="view-today">
+      <div class="dateday"><button class="daynavbtn" id="prevDay">‹</button><span id="dateLabel"></span><button class="daynavbtn" id="nextDay">›</button></div>
+      <div class="card targets">
+        <div class="cals"><span id="calEaten">0</span><small> / <span id="calGoal">1600</span> <span id="calWord">cal</span></small></div>
+        <div class="calbar"><div class="calfill" id="calFill"></div></div>
+        <div class="macros">
+          <div class="macro"><span class="mname" id="mProtein">Protein</span><div class="mbar"><div class="mfill pf" id="pFill"></div></div><span class="mval"><b id="pEaten">0</b>/<span id="pGoal">120</span>g</span></div>
+          <div class="macro"><span class="mname" id="mCarbs">Carbs</span><div class="mbar"><div class="mfill cf" id="cFill"></div></div><span class="mval"><b id="cEaten">0</b>/<span id="cGoal">150</span>g</span></div>
+          <div class="macro"><span class="mname" id="mFat">Fat</span><div class="mbar"><div class="mfill ff" id="fFill"></div></div><span class="mval"><b id="fEaten">0</b>/<span id="fGoal">53</span>g</span></div>
+        </div>
+        <div class="remaining" id="remainingLine"></div>
+      </div>
+      <div id="meals"></div>
+    </section>
+
+    <!-- WEIGHT -->
+    <section class="view hidden" id="view-weight">
+      <h2 class="viewtitle" id="weightTitle">Weight</h2>
+      <div class="card">
+        <div class="wrow">
+          <div><small id="curWLabel">Current</small><div class="wbig"><span id="curW">--</span><small> lb</small></div></div>
+          <div><small id="goalWLabel">Goal</small><div class="wbig goal"><span id="goalW">125</span><small> lb</small></div></div>
+          <div><small id="toGoLabel">To go</small><div class="wbig"><span id="toGo">--</span><small> lb</small></div></div>
+        </div>
+        <div class="wform">
+          <input type="number" id="weightInput" step="0.1" min="80" max="400" inputmode="decimal" placeholder="135">
+          <button class="btn-primary" id="logWeightBtn">Log weight</button>
+        </div>
+        <div id="weightChart"></div>
+      </div>
+    </section>
+
+    <!-- GROCERIES -->
+    <section class="view hidden" id="view-groceries">
+      <h2 class="viewtitle" id="grocTitle">Grocery list</h2>
+      <div class="card">
+        <div class="wform">
+          <input type="text" id="grocInput" maxlength="60">
+          <button class="btn-primary" id="addGrocBtn">Add</button>
+        </div>
+        <div id="grocList"></div>
+        <button class="btn-ghost" id="staplesBtn">Add healthy staples</button>
+        <button class="btn-ghost danger" id="clearGrocBtn">Clear checked</button>
+      </div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section class="view hidden" id="view-settings">
+      <h2 class="viewtitle" id="setTitle">Settings</h2>
+      <div class="card">
+        <h3 id="goalsH">Daily goals</h3>
+        <div class="setgrid">
+          <label><span id="gCalL">Calories</span><input type="number" id="setCal" min="800" max="5000"></label>
+          <label><span id="gPL">Protein (g)</span><input type="number" id="setP" min="0" max="500"></label>
+          <label><span id="gCL">Carbs (g)</span><input type="number" id="setC" min="0" max="800"></label>
+          <label><span id="gFL">Fat (g)</span><input type="number" id="setF" min="0" max="300"></label>
+          <label><span id="gWL">Weight goal (lb)</span><input type="number" id="setW" min="80" max="400" step="1"></label>
+        </div>
+        <button class="btn-primary wide" id="saveSetBtn">Save</button>
+        <h3 id="usdaH">USDA food search (optional)</h3>
+        <p class="hint" id="usdaHint">Free key at api.nal.usda.gov. Paste it here to search the full USDA database inside the app.</p>
+        <input type="text" id="usdaKey" class="wide-input" placeholder="DEMO_KEY" autocomplete="off">
+        <button class="btn-primary wide" id="saveUsdaBtn">Save key</button>
+        <h3 id="dataH">Data</h3>
+        <button class="btn-ghost wide" id="exportBtn">Download my data</button>
+      </div>
+    </section>
+  </main>
+
+  <nav class="bottomnav">
+    <button data-view="today" class="on"><span class="ico">◉</span><span id="navToday">Today</span></button>
+    <button data-view="weight"><span class="ico">≋</span><span id="navWeight">Weight</span></button>
+    <button data-view="groceries"><span class="ico">▤</span><span id="navGroc">Groceries</span></button>
+    <button data-view="settings"><span class="ico">⚙</span><span id="navSet">Settings</span></button>
+  </nav>
+</div>
+
+<!-- ADD FOOD MODAL -->
+<div class="modal hidden" id="foodModal">
+  <div class="modalcard">
+    <h2 id="fmTitle">Add food</h2>
+    <input type="text" id="foodSearch" autocomplete="off">
+    <div class="results" id="foodResults"></div>
+    <div class="customform hidden" id="customForm">
+      <input type="text" id="cName" maxlength="60">
+      <div class="setgrid">
+        <label><span>Cal</span><input type="number" id="cCal" min="0" inputmode="decimal"></label>
+        <label><span>P (g)</span><input type="number" id="cP" min="0" inputmode="decimal"></label>
+        <label><span>C (g)</span><input type="number" id="cC" min="0" inputmode="decimal"></label>
+        <label><span>F (g)</span><input type="number" id="cF" min="0" inputmode="decimal"></label>
+      </div>
+    </div>
+    <label class="photolabel"><span id="photoLabel">Photo (optional)</span><input type="file" id="foodPhoto" accept="image/*"></label>
+    <div class="qtyrow">
+      <label><span id="qtyLabel">Servings</span>
+        <div class="qtyctrl"><button id="qMinus">−</button><span id="qVal">1</span><button id="qPlus">+</button></div>
+      </label>
+    </div>
+    <button class="btn-primary wide" id="fmAdd">Add</button>
+    <button class="btn-ghost wide" id="fmClose">Close</button>
+  </div>
+</div>
+
+<script src="foods.js?v=1"></script>
+<script src="app.js?v=1"></script>
+</body>
+</html>

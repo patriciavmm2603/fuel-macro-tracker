@@ -1,0 +1,99 @@
+:root {
+  --wine: #5E1F2E;
+  --wine-soft: #f7eef0;
+  --ink: #2b2320;
+  --muted: #8a7a72;
+  --line: #e9ddd8;
+  --bg: #faf6f3;
+  --card: #ffffff;
+  --green: #4C8C4A;
+  --gold: #b98a2f;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: var(--ink); line-height: 1.55; }
+.app { max-width: 480px; margin: 0 auto; padding-bottom: 96px; }
+.topbar { text-align: center; padding: 20px 20px 8px; background: var(--card); border-bottom: 1px solid var(--line); }
+.kicker { font-size: 11px; letter-spacing: 3px; color: var(--muted); text-transform: uppercase; }
+.topbar h1 { font-size: 32px; color: var(--wine); margin: 2px 0; }
+.topbar .sub { font-size: 13px; color: var(--muted); }
+.langtoggle { display: flex; justify-content: center; gap: 6px; margin-top: 10px; }
+.langtoggle button { font-size: 12px; padding: 6px 14px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); background: var(--card); cursor: pointer; }
+.langtoggle button.active { background: var(--wine); color: #fff; border-color: var(--wine); }
+.streakline { text-align: center; padding: 8px; font-size: 13px; color: var(--wine); font-weight: 600; min-height: 18px; }
+main { padding: 6px 14px 0; }
+.view.hidden { display: none; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 18px; margin-bottom: 14px; }
+.card h3 { font-size: 13px; letter-spacing: 2px; text-transform: uppercase; color: var(--wine); margin: 14px 0 8px; }
+.card h3:first-child { margin-top: 0; }
+.viewtitle { font-size: 20px; color: var(--wine); margin: 6px 2px 12px; }
+.dateday { display: flex; align-items: center; justify-content: space-between; margin: 2px 2px 10px; font-weight: 700; color: var(--wine); }
+.daynavbtn { border: 1px solid var(--line); background: var(--card); border-radius: 10px; width: 40px; height: 36px; font-size: 20px; color: var(--wine); cursor: pointer; }
+.cals { font-size: 34px; font-weight: 700; color: var(--wine); text-align: center; }
+.cals small { font-size: 15px; color: var(--muted); font-weight: 400; }
+.calbar { height: 10px; background: var(--wine-soft); border-radius: 999px; margin: 10px 0 14px; overflow: hidden; }
+.calfill { height: 100%; background: var(--wine); border-radius: 999px; width: 0; transition: width .3s; }
+.calfill.over { background: var(--gold); }
+.macros { display: flex; flex-direction: column; gap: 8px; }
+.macro { display: grid; grid-template-columns: 64px 1fr 74px; align-items: center; gap: 8px; font-size: 13px; }
+.mname { color: var(--muted); }
+.mbar { height: 8px; background: var(--bg); border-radius: 999px; overflow: hidden; }
+.mfill { height: 100%; width: 0; border-radius: 999px; transition: width .3s; }
+.pf { background: #7a4a5a; } .cf { background: var(--gold); } .ff { background: #4a7a8c; }
+.mval { text-align: right; color: var(--muted); } .mval b { color: var(--ink); }
+.remaining { text-align: center; font-size: 13px; color: var(--muted); margin-top: 10px; }
+.mealhead { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.mealhead h3 { font-size: 13px; letter-spacing: 2px; text-transform: uppercase; color: var(--wine); }
+.mealhead .mtot { font-size: 12px; color: var(--muted); }
+.addbtn { border: 1px dashed var(--wine); background: none; color: var(--wine); border-radius: 10px; width: 100%; padding: 10px; font-size: 14px; cursor: pointer; margin-top: 4px; }
+.fooditem { display: flex; gap: 10px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--line); }
+.fooditem:last-of-type { border-bottom: none; }
+.fooditem img { width: 44px; height: 44px; object-fit: cover; border-radius: 10px; }
+.fooditem .fi { flex: 1; }
+.fooditem .fi b { font-size: 14px; display: block; }
+.fooditem .fi small { color: var(--muted); font-size: 12px; }
+.fooditem .fk { font-size: 13px; font-weight: 700; color: var(--wine); white-space: nowrap; }
+.delbtn { border: none; background: none; color: var(--muted); font-size: 18px; cursor: pointer; padding: 4px; }
+.empty-meal { color: var(--muted); font-size: 13px; padding: 6px 0; }
+.wrow { display: flex; justify-content: space-around; text-align: center; margin-bottom: 12px; }
+.wrow small { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
+.wbig { font-size: 28px; font-weight: 700; color: var(--wine); }
+.wbig small { font-size: 13px; color: var(--muted); }
+.wbig.goal { color: var(--green); }
+.wform { display: flex; gap: 8px; margin: 10px 0; }
+.wform input[type="number"], .wform input[type="text"] { flex: 1; padding: 12px; border: 1px solid var(--line); border-radius: 12px; font-size: 15px; background: var(--bg); }
+.btn-primary { background: var(--wine); color: #fff; border: none; border-radius: 12px; padding: 12px 18px; font-size: 15px; font-weight: 600; cursor: pointer; }
+.btn-primary.wide, .btn-ghost.wide { width: 100%; margin-top: 8px; }
+.btn-ghost { border: 1px solid var(--line); background: var(--card); color: var(--wine); border-radius: 12px; padding: 10px 14px; font-size: 14px; cursor: pointer; margin-top: 8px; }
+.btn-ghost.danger { color: #a33; }
+#weightChart { margin-top: 8px; }
+#weightChart svg { width: 100%; height: 140px; }
+.grocitem { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--line); font-size: 15px; }
+.grocitem:last-child { border-bottom: none; }
+.grocitem input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--wine); }
+.grocitem.done span { text-decoration: line-through; color: var(--muted); }
+.grocitem .delbtn { margin-left: auto; }
+.setgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 6px; }
+.setgrid label { font-size: 13px; color: var(--muted); display: flex; flex-direction: column; gap: 4px; }
+.setgrid input { padding: 10px; border: 1px solid var(--line); border-radius: 10px; font-size: 15px; background: var(--bg); }
+.wide-input { width: 100%; padding: 12px; border: 1px solid var(--line); border-radius: 12px; font-size: 14px; background: var(--bg); margin-bottom: 4px; }
+.hint { font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+.bottomnav { position: fixed; bottom: 0; left: 0; right: 0; display: flex; border-top: 1px solid var(--line); background: var(--card); padding: 8px 4px 18px; z-index: 20; max-width: 480px; margin: 0 auto; }
+.bottomnav button { flex: 1; border: none; background: none; font-size: 11px; color: var(--muted); cursor: pointer; }
+.bottomnav button.on { color: var(--wine); font-weight: 700; }
+.bottomnav .ico { font-size: 20px; display: block; }
+.modal { position: fixed; inset: 0; background: rgba(43,35,32,.55); display: flex; align-items: flex-end; justify-content: center; z-index: 50; }
+.modal.hidden { display: none; }
+.modalcard { background: var(--bg); border-radius: 20px 20px 0 0; padding: 20px; width: 100%; max-width: 480px; max-height: 88vh; overflow-y: auto; }
+.modalcard h2 { color: var(--wine); font-size: 18px; margin-bottom: 10px; }
+.modalcard input[type="text"] { width: 100%; padding: 12px; border: 1px solid var(--line); border-radius: 12px; font-size: 15px; background: var(--card); margin-bottom: 8px; }
+.results { max-height: 260px; overflow-y: auto; margin-bottom: 8px; }
+.result { width: 100%; text-align: left; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; margin-bottom: 6px; cursor: pointer; font-size: 14px; }
+.result.sel { border-color: var(--wine); background: var(--wine-soft); }
+.result small { color: var(--muted); display: block; font-size: 12px; }
+.customform.hidden { display: none; }
+.photolabel { display: block; font-size: 13px; color: var(--muted); margin: 8px 0; }
+.photolabel input { display: block; margin-top: 4px; font-size: 13px; }
+.qtyrow { margin: 8px 0; font-size: 14px; }
+.qtyctrl { display: inline-flex; align-items: center; gap: 14px; margin-left: 10px; }
+.qtyctrl button { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--wine); background: var(--card); color: var(--wine); font-size: 20px; cursor: pointer; }
+.qtyctrl span { font-weight: 700; min-width: 24px; text-align: center; }
