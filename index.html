@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Fuel - Calorie &amp; Macro Tracker</title>
-<link rel="stylesheet" href="styles.css?v=1">
+<link rel="stylesheet" href="styles.css?v=2">
 </head>
 <body>
 <div class="app">
@@ -85,8 +85,20 @@
         <p class="hint" id="usdaHint">Free key at api.nal.usda.gov. Paste it here to search the full USDA database inside the app.</p>
         <input type="text" id="usdaKey" class="wide-input" placeholder="DEMO_KEY" autocomplete="off">
         <button class="btn-primary wide" id="saveUsdaBtn">Save key</button>
+        <h3 id="recH">Recommended for you</h3>
+        <p class="hint" id="recHint"></p>
+        <div class="setgrid">
+          <label><span id="rAgeL">Age</span><input type="number" id="recAge" min="14" max="100" inputmode="numeric"></label>
+          <label><span id="rHtL">Height</span><div class="hrow"><input type="number" id="recFt" min="3" max="8" inputmode="numeric" placeholder="ft"><input type="number" id="recIn" min="0" max="11" inputmode="numeric" placeholder="in"></div></label>
+          <label><span id="rWtL">Weight (lb)</span><input type="number" id="recWt" min="80" max="500" inputmode="decimal"></label>
+          <label><span id="rActL">Activity</span><select id="recAct"></select></label>
+        </div>
+        <label class="fulllabel"><span id="rGoalL">Goal</span><select id="recGoal"></select></label>
+        <button class="btn-primary wide" id="calcBtn">Calculate</button>
+        <div id="recOut" class="hidden"></div>
         <h3 id="dataH">Data</h3>
         <button class="btn-ghost wide" id="exportBtn">Download my data</button>
+        <p class="hint disclaim" id="discSet"></p>
       </div>
     </section>
   </main>
@@ -125,7 +137,16 @@
   </div>
 </div>
 
+<!-- DISCLAIMER MODAL -->
+<div class="modal hidden" id="discModal">
+  <div class="modalcard">
+    <h2 id="discTitle">A quick note</h2>
+    <p id="discText" class="disctext"></p>
+    <button class="btn-primary wide" id="discOk">I understand</button>
+  </div>
+</div>
+
 <script src="foods.js?v=2"></script>
-<script src="app.js?v=1"></script>
+<script src="app.js?v=2"></script>
 </body>
 </html>

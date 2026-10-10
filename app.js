@@ -26,7 +26,23 @@ var STR = {
     saveKey: "Save key", dataH: "Data", export: "Download my data",
     streak: "day streak", noStreak: "Log a meal to start your streak.",
     usdaErr: "USDA search failed. Check your key.",
-    pickFood: "Tap a food to select it, then Add."
+    pickFood: "Tap a food to select it, then Add.",
+    almostThere: "Almost at your limit",
+    recH: "Recommended for you",
+    recHint: "Answer a few questions and we will suggest daily targets. You can still change them after.",
+    rAge: "Age", rHt: "Height", rWt: "Weight (lb)", rAct: "Activity", rGoal: "Goal",
+    calcBtn: "Calculate",
+    actSed: "Little to no exercise", actLight: "Light exercise 1-3 days/week",
+    actMod: "Moderate exercise 3-5 days/week", actVery: "Hard exercise 6-7 days/week",
+    goalLose1: "Lose about 1 lb per week", goalLose05: "Lose about 0.5 lb per week",
+    goalMaintain: "Maintain weight", goalGain: "Gain muscle",
+    needFields: "Fill in age, height, and weight first.",
+    recOut: "Suggested daily targets",
+    recFloor: "This is the safe minimum. Talk to your doctor before going lower.",
+    useGoals: "Use these goals",
+    discTitle: "A quick note",
+    discText: "Fuel is a personal tracking tool, not medical advice. Talk to your doctor before starting any diet or making big changes to how you eat, especially if you have a health condition, take medication, are pregnant, or have a history of disordered eating.",
+    discOk: "I understand"
   },
   es: {
     appSub: "Registro de calorías y macros",
@@ -51,7 +67,23 @@ var STR = {
     saveKey: "Guardar clave", dataH: "Datos", export: "Descargar mis datos",
     streak: "días de racha", noStreak: "Registra una comida para empezar tu racha.",
     usdaErr: "Falló la búsqueda USDA. Revisa tu clave.",
-    pickFood: "Toca una comida para elegirla, luego Agregar."
+    pickFood: "Toca una comida para elegirla, luego Agregar.",
+    almostThere: "Casi en tu límite",
+    recH: "Recomendado para ti",
+    recHint: "Responde unas preguntas y te sugeriremos metas diarias. Puedes cambiarlas después.",
+    rAge: "Edad", rHt: "Estatura", rWt: "Peso (lb)", rAct: "Actividad", rGoal: "Meta",
+    calcBtn: "Calcular",
+    actSed: "Poco o nada de ejercicio", actLight: "Ejercicio ligero 1-3 días/semana",
+    actMod: "Ejercicio moderado 3-5 días/semana", actVery: "Ejercicio fuerte 6-7 días/semana",
+    goalLose1: "Bajar ~1 lb por semana", goalLose05: "Bajar ~0.5 lb por semana",
+    goalMaintain: "Mantener peso", goalGain: "Ganar músculo",
+    needFields: "Completa edad, estatura y peso primero.",
+    recOut: "Metas diarias sugeridas",
+    recFloor: "Este es el mínimo seguro. Habla con tu médico antes de bajar más.",
+    useGoals: "Usar estas metas",
+    discTitle: "Una nota rápida",
+    discText: "Fuel es una herramienta personal de registro, no es consejo médico. Habla con tu médico antes de empezar cualquier dieta o hacer cambios grandes en tu alimentación, especialmente si tienes una condición de salud, tomas medicamentos, estás embarazada o tienes historial de trastornos alimenticios.",
+    discOk: "Entendido"
   }
 };
 
@@ -155,9 +187,18 @@ function renderToday() {
   $("cFill").style.width = Math.min(100, tot.c / g.c * 100) + "%";
   $("fFill").style.width = Math.min(100, tot.f / g.f * 100) + "%";
   var rem = g.cal - tot.cal;
-  $("remainingLine").textContent = rem >= 0
-    ? rem + " " + t("calWord") + " " + t("remaining")
-    : t("overBy") + " " + Math.abs(rem) + " " + t("calWord");
+  var pct = g.cal > 0 ? tot.cal / g.cal : 0;
+  var rl = $("remainingLine");
+  rl.classList.remove("warn", "close");
+  if (pct >= 1) {
+    rl.classList.add("warn");
+    rl.textContent = "⚠ " + t("overBy") + " " + Math.abs(rem) + " " + t("calWord");
+  } else if (pct >= 0.9) {
+    rl.classList.add("close");
+    rl.textContent = t("almostThere") + ": " + rem + " " + t("calWord") + " " + t("remaining");
+  } else {
+    rl.textContent = rem + " " + t("calWord") + " " + t("remaining");
+  }
 
   var log = getLog(ds), box = $("meals");
   box.innerHTML = "";
@@ -381,7 +422,68 @@ function renderGroceries() {
   });
 }
 
-/* ---------- settings ---------- */
+/* ---------- recommended targets ---------- */
+function renderRecSelects() {
+  var acts = [["1.2", t("actSed")], ["1.375", t("actLight")], ["1.55", t("actMod")], ["1.725", t("actVery")]];
+  var goals = [["lose1", t("goalLose1")], ["lose05", t("goalLose05")], ["maintain", t("goalMaintain")], ["gain", t("goalGain")]];
+  var a = $("recAct"); a.innerHTML = "";
+  acts.forEach(function (o, i) {
+    var op = document.createElement("option");
+    op.value = o[0]; op.textContent = o[1];
+    if (i === 2) op.selected = true;
+    a.appendChild(op);
+  });
+  var g = $("recGoal"); g.innerHTML = "";
+  goals.forEach(function (o, i) {
+    var op = document.createElement("option");
+    op.value = o[0]; op.textContent = o[1];
+    if (i === 0) op.selected = true;
+    g.appendChild(op);
+  });
+}
+
+function calcRec() {
+  var age = parseInt($("recAge").value, 10);
+  var ft = parseInt($("recFt").value, 10);
+  var inch = parseInt($("recIn").value, 10) || 0;
+  var lb = parseFloat($("recWt").value);
+  var out = $("recOut");
+  if (!age || !ft || !lb) {
+    out.classList.remove("hidden");
+    out.innerHTML = esc(t("needFields"));
+    return;
+  }
+  var kg = lb / 2.20462, cm = (ft * 12 + inch) * 2.54;
+  var bmr = 10 * kg + 6.25 * cm - 5 * age - 161; // Mifflin-St Jeor, women
+  var tdee = bmr * parseFloat($("recAct").value);
+  var adj = { lose1: -500, lose05: -250, maintain: 0, gain: 250 }[$("recGoal").value] || 0;
+  var cal = Math.round((tdee + adj) / 10) * 10;
+  var floored = false;
+  if (cal < 1200) { cal = 1200; floored = true; }
+  var p = Math.round(0.9 * lb);
+  var f = Math.round(cal * 0.25 / 9);
+  var c = Math.max(0, Math.round((cal - p * 4 - f * 9) / 4));
+  out.classList.remove("hidden");
+  out.innerHTML = "<b>" + esc(t("recOut")) + ":</b><br>" +
+    cal + " " + esc(t("calWord")) + " · " + p + "g " + esc(t("protein")) +
+    " · " + c + "g " + esc(t("carbs")) + " · " + f + "g " + esc(t("fat")) +
+    (floored ? "<br><small>" + esc(t("recFloor")) + "</small>" : "") +
+    "<br><button class='btn-primary wide' id='useRecBtn'>" + esc(t("useGoals")) + "</button>";
+  $("useRecBtn").onclick = function () {
+    state.goals.cal = cal; state.goals.p = p; state.goals.c = c; state.goals.f = f;
+    saveGoals(); renderSettings(); renderChrome();
+    if (state.view === "today") renderToday();
+  };
+}
+
+/* ---------- disclaimer ---------- */
+function renderDisc() {
+  $("discTitle").textContent = t("discTitle");
+  $("discText").textContent = t("discText");
+  $("discOk").textContent = t("discOk");
+  var ds = $("discSet");
+  if (ds) ds.textContent = t("discText");
+}
 function renderSettings() {
   $("setTitle").textContent = t("setTitle");
   $("goalsH").textContent = t("goalsH");
@@ -393,6 +495,15 @@ function renderSettings() {
   $("saveUsdaBtn").textContent = t("saveKey");
   $("dataH").textContent = t("dataH");
   $("exportBtn").textContent = t("export");
+  $("recH").textContent = t("recH");
+  $("recHint").textContent = t("recHint");
+  $("rAgeL").textContent = t("rAge"); $("rHtL").textContent = t("rHt");
+  $("rWtL").textContent = t("rWt"); $("rActL").textContent = t("rAct");
+  $("rGoalL").textContent = t("rGoal");
+  $("calcBtn").textContent = t("calcBtn");
+  renderRecSelects();
+  if (!$("recWt").value) $("recWt").value = 135;
+  renderDisc();
   $("setCal").value = state.goals.cal; $("setP").value = state.goals.p;
   $("setC").value = state.goals.c; $("setF").value = state.goals.f; $("setW").value = state.goals.w;
   $("usdaKey").value = state.usdaKey;
@@ -418,7 +529,7 @@ document.querySelectorAll(".langtoggle button").forEach(function (b) {
   b.onclick = function () {
     state.lang = b.dataset.lang;
     localStorage.setItem("fuel_lang", state.lang);
-    renderChrome(); showView(state.view);
+    renderChrome(); renderDisc(); showView(state.view);
   };
 });
 document.querySelectorAll(".bottomnav button").forEach(function (b) {
@@ -486,6 +597,11 @@ $("saveUsdaBtn").onclick = function () {
   $("saveUsdaBtn").textContent = t("saved");
   setTimeout(function () { $("saveUsdaBtn").textContent = t("saveKey"); }, 1200);
 };
+$("calcBtn").onclick = calcRec;
+$("discOk").onclick = function () {
+  localStorage.setItem("fuel_disc", "1");
+  $("discModal").classList.add("hidden");
+};
 $("exportBtn").onclick = function () {
   var data = { goals: state.goals, weights: state.weights, groceries: state.groceries, logs: {} };
   for (var i = 0; i < 60; i++) {
@@ -503,4 +619,8 @@ $("exportBtn").onclick = function () {
 /* ---------- boot ---------- */
 loadAll();
 renderChrome();
+renderDisc();
 showView("today");
+if (!localStorage.getItem("fuel_disc")) {
+  $("discModal").classList.remove("hidden");
+}
